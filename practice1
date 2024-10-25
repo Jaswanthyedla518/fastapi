@@ -1,0 +1,30 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI()
+
+
+employees = {
+    "virat_kohli": "kohli@123",
+    "rohith_sharma": "rohith@264",
+    "kl_rahul": "rahul@100",
+    "rishabh_pant": "rishabh@99",
+    "ravichandran_ashwin": "ravi@shwin",
+    "jasprit_bumrah": "jaspritbumrah!@",
+    "ab_devillers": "abd_360",
+    
+}
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/login/")
+async def login(login_request: LoginRequest):
+    if login_request.username in employees:
+        if employees[login_request.username] == login_request.password:
+            return {"message": "Login successful!", "username": login_request.username}
+        else:
+            raise HTTPException(status_code=401, detail="Incorrect password")
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
